@@ -44,7 +44,7 @@ function App() {
   return (
     <div className="App">
       <center>
-      <h1>LIDAR Visualization</h1>
+      <h1>LiDAR Visualization</h1>
       {connected ? (
         <div>
           {/* Render the LidarVisualization component if data is available */}
