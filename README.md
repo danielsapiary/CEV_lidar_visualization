@@ -1,56 +1,96 @@
-# CEV_lidar_visualization
+# CEV LIDAR Visualization
 
-This is a simple WebSocket chat application built with a React frontend and a Node.js backend. The backend serves the frontend and also handles WebSocket connections for real-time messaging.
+This project is a LIDAR visualization tool built using React and WebSockets. It visualizes LIDAR data by plotting points around a car emoji, simulating distances detected by LIDAR sensors. The app can also handle incoming LIDAR data via WebSockets, displaying all points beyond a detected distance at each angle. The car is placed at the origin, and LIDAR points are plotted around it.
 
 ## Features
-- Connect to a WebSocket server by specifying the backend IP address.
-- Send and receive messages in real time.
+- **Real-time WebSocket Data**: Receives LIDAR data in real-time from a WebSocket server and updates the visualization accordingly.
+- **Distance Thresholds**: Filters out LIDAR points that are less than 0.25 meters away.
+- **Outward Drawing**: For each detected point, the app draws points at distances greater than or equal to that detected point.
+- **Car Emoji**: Displays a car emoji at the origin to represent the object being scanned.
 
-## Requirements
-- Node.js (v12 or later)
-- npm (v6 or later)
+## Installation
 
-## Setup Instructions
+### Prerequisites
+- **Node.js**: Make sure you have Node.js installed on your machine.
+- **NPM**: Comes with Node.js, but you can check by running `npm --version` in your terminal.
 
-1. **Clone the Repository**
-   ```sh
-   git clone <repository-url>
-   cd websocket-chat-app
+### Backend Setup
+1. **Clone the repository**:
+   ```bash
+   git clone <your-repo-url>
+   cd CEV_lidar_visualization
    ```
 
-2. **Install Dependencies**
-   ```sh
-   npm install
-   cd frontend
-   npm install
-   cd ..
+2. **Install dependencies for the backend**:
+   ```bash
+   npm install express ws
    ```
 
-3. **Build the React Frontend**
-   ```sh
-   cd frontend
-   npm run build
-   cd ..
-   ```
-
-4. **Run the Backend Server**
-   ```sh
+3. **Start the backend WebSocket server**:
+   ```bash
    node server.js
    ```
 
-   The server will start on port 3001, and the WebSocket server will run on port 3002.
+   This will start the server on port 3001 for HTTP POST requests and port 3002 for WebSocket connections.
 
-5. **Access the Application**
-   - Open your web browser and go to `http://<your-ip-address>:3001`
-   - Enter the backend IP address in the input field to connect to the WebSocket server.
+### Frontend Setup
+1. **Navigate to the frontend directory**:
+   ```bash
+   cd frontend
+   ```
 
-## Usage
-- Once connected, you can send messages through the input field.
-- All connected clients will see messages in real time.
+2. **Install dependencies for the frontend**:
+   ```bash
+   npm install
+   ```
 
-## Troubleshooting
-- Ensure that the server is running on `0.0.0.0` to make it accessible from other devices on the same network.
-- Make sure ports `3001` and `3002` are open on the host machine.
+3. **Start the React frontend**:
+   ```bash
+   npm start
+   ```
+
+   This will start the frontend development server at `http://localhost:3000`.
+
+## How to Use
+1. **Start the Backend**: Run the WebSocket server using `node server.js`. The backend will listen for incoming LIDAR data via POST requests and broadcast it to connected clients via WebSocket.
+   
+2. **Start the Frontend**: Run the React app with `npm start` in the `frontend/` directory. The frontend will automatically connect to the WebSocket server and start visualizing data.
+
+3. **Sending LIDAR Data**: You can send LIDAR data (JSON format) to the backend from any machine via an HTTP POST request. Example using `curl`:
+   ```bash
+   curl -X POST http://localhost:3001/upload-lidar \
+   -H "Content-Type: application/json" \
+   -d @scan.json
+   ```
+   This will send a LIDAR scan JSON file (e.g., `scan.json`) to the backend, and the frontend will update the visualization in real time.
+
+4. **Visualization Behavior**:
+   - LIDAR points are plotted around the car emoji at the origin.
+   - For each detected point at distance `d`, all points beyond that distance (i.e., from `d` to 10 meters) are filled at the same angle.
+   - LIDAR points less than 0.25 meters from the car are ignored.
+
+## JSON Format for LIDAR Data
+The expected format for LIDAR data sent via POST is as follows:
+```json
+{
+  "timestamp": <timestamp>,
+  "angle_min": -3.141592653589793,
+  "angle_max": 3.141592653589793,
+  "angle_increment": 0.008726646259971648,
+  "ranges": [
+    <distance1>, <distance2>, ..., <distanceN>
+  ]
+}
+```
+- **`ranges`**: An array of distances measured by the LIDAR sensor.
+- **`angle_increment`**: The angle increment between two consecutive measurements.
+
+## Handling Special Values
+- If the `ranges` array contains `Infinity`, these values will be replaced with `null` to avoid parsing errors.
+- The frontend filters out any points closer than 0.25 meters and draws points outward for all detected points.
+
+## Example Visualization
+The app will display a car emoji at the center of the screen, with LIDAR points drawn around it. If a point is detected at a certain distance, all points beyond that distance will be drawn in black.
 
 ## License
 This project is licensed under the MIT License.
