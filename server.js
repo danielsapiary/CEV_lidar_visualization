@@ -15,7 +15,7 @@ const preprocessJson = (rawData) => {
 };
 
 // Load default.json and preprocess it
-let rawData = fs.readFileSync('default.json', 'utf8');
+let rawData = fs.readFileSync('frame.json', 'utf8');
 let latestScanData = JSON.parse(preprocessJson(rawData));
 
 // Function to replace Infinity values with null in the ranges array (not needed if handled earlier, but good for incoming data)
