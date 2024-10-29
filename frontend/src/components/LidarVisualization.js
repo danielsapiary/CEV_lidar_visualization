@@ -42,7 +42,7 @@ const LidarVisualization = ({ scanData }) => {
       {/* Apply the clipping path to keep everything inside a circle */}
       <g clipPath="url(#circleView)">
         {/* Car image at the origin */}
-        <image href="/car.png" x="-25" y="-25" width="50" height="50" />
+        <image href="/car.png" x="-50" y="-50" width="100" height="100" />
 
         {/* Debug yellow point at the middle */}
         {/* <circle cx="0" cy="0" r="5" fill="yellow" /> */}
