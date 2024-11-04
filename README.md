@@ -2,6 +2,8 @@
 
 This project is a LIDAR visualization tool built using React and WebSockets. It visualizes LIDAR data by plotting points around a car emoji, simulating distances detected by LIDAR sensors. The app can also handle incoming LIDAR data via WebSockets, displaying all points beyond a detected distance at each angle. The car is placed at the origin, and LIDAR points are plotted around it.
 
+<img width="300" alt="Screenshot 2024-11-04 at 12 55 50 PM" src="https://github.com/user-attachments/assets/870b1812-e09a-4fec-9a79-1c470b3d1303">
+
 ## Installation
 
 ### Prerequisites
