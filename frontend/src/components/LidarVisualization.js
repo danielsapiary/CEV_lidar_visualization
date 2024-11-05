@@ -1,75 +1,83 @@
 import React from 'react';
 
-const LidarVisualization = ({ scanData }) => {
+const LidarVisualization = ({ scanData, maxConsecutivePoints = 5, overlapPoints = 2 }) => {
   const { angle_increment, ranges } = scanData;
 
-  // Maximum distance to display (in meters)
   const maxDistance = 10;
-  const minDistance = 0.5; // Minimum distance to display (filter out points below this)
+  const minDistance = 0.5;
 
-  // Polar to Cartesian conversion
   const polarToCartesian = (theta, distance) => {
     const x = distance * Math.cos(theta);
     const y = distance * Math.sin(theta);
     return { x, y };
   };
 
-  // Map over the ranges array and calculate the Cartesian coordinates for each point
   const points = ranges.map((distance, index) => {
-    // Set distance to minimum threshold if below minDistance
     const validDistance = distance >= minDistance ? Math.min(distance, maxDistance) : distance;
-
-    // Calculate theta for the point
     const theta = index * angle_increment - Math.PI;
-
-    // Convert to Cartesian coordinates
     const { x, y } = polarToCartesian(theta, validDistance);
     return { x, y, theta, distance };
   });
 
-  // Scale factor to fit the points in the SVG viewBox where 10 meters equals half the viewBox size
-  const scaleFactor = 250 / maxDistance; // 250 comes from half the viewBox radius
+  const scaleFactor = 250 / maxDistance;
 
   return (
-    <svg width="500" height="500" viewBox="-250 -250 500 500" style={{ border: '5px solid black', borderRadius: '50%' }}>
+    <svg
+      width="500"
+      height="500"
+      viewBox="-250 -250 500 500"
+      style={{ border: '5px solid black', borderRadius: '50%' }}
+      shapeRendering="crispEdges"
+    >
       <defs>
-        {/* Define a circular clipping path */}
         <clipPath id="circleView">
           <circle cx="0" cy="0" r="250" />
         </clipPath>
       </defs>
 
-      {/* Apply the clipping path to keep everything inside a circle */}
       <g clipPath="url(#circleView)">
-        {/* Car image at the origin */}
-        <image href="/car.png" x="-50" y="-50" width="100" height="100" />
+        <image href="/car.png" x="-25" y="-25" width="50" height="50" />
 
-        {/* Debug yellow point at the middle */}
-        {/* <circle cx="0" cy="0" r="5" fill="yellow" /> */}
+        {(() => {
+          const groupedPolygons = [];
+          let currentGroup = [];
 
-        {/* Render LIDAR points and rays */}
-        {points.map((point, index) => {
-          const { x, y, theta, distance } = point;
+          points.forEach((point, index) => {
+            if (point.distance >= minDistance) {
+              currentGroup.push(point);
 
-          return (
-            <g key={index}>
-              {/* Draw the point always */}
-              <circle cx={x * scaleFactor} cy={y * scaleFactor} r="2" fill="cyan" />
+              // Ensure groups overlap by using `overlapPoints`
+              if (currentGroup.length >= maxConsecutivePoints + overlapPoints || index === points.length - 1) {
+                // Calculate outer edge points with additional overlap extension
+                const edgePoints = currentGroup.map(p => polarToCartesian(p.theta, maxDistance * 1.02)); // Extend by 2%
 
-              {/* Draw a ray extending from the point to the maximum distance if beyond minDistance */}
-              {distance >= minDistance && (
-                <line
-                  x1={x * scaleFactor}
-                  y1={y * scaleFactor}
-                  x2={(maxDistance * Math.cos(theta)) * scaleFactor}
-                  y2={(maxDistance * Math.sin(theta)) * scaleFactor}
-                  stroke="rgba(0, 0, 0, 0.25)" // Semi-transparent line
-                  strokeWidth="5"
-                />
-              )}
-            </g>
-          );
-        })}
+                // Construct polygon points, reusing the overlap points for smooth connection
+                const polygonString = [
+                  ...currentGroup.map(p => `${p.x * scaleFactor},${p.y * scaleFactor}`),
+                  ...edgePoints.reverse().map(p => `${p.x * scaleFactor},${p.y * scaleFactor}`)
+                ].join(" ");
+
+                groupedPolygons.push(
+                  <polygon
+                    key={index}
+                    points={polygonString}
+                    fill="rgba(150, 150, 150, 1)" // Slightly darker fill for visibility
+                    stroke="none"
+                  />
+                );
+
+                // Start the next group with the last `overlapPoints` of the current group
+                currentGroup = currentGroup.slice(-overlapPoints);
+              }
+            } else {
+              if (currentGroup.length > 0) {
+                currentGroup = [];
+              }
+            }
+          });
+
+          return groupedPolygons;
+        })()}
       </g>
     </svg>
   );
