@@ -13,7 +13,7 @@ This project is a LIDAR visualization tool built using React and WebSockets. It 
 ### Backend Setup
 1. **Clone the repository**:
    ```bash
-   git clone <your-repo-url>
+   git clone git@github.com:danielsapiary/CEV_lidar_visualization.git
    cd CEV_lidar_visualization
    ```
 
