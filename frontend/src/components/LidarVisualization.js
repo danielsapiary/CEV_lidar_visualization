@@ -12,11 +12,41 @@ const LidarVisualization = ({ scanData, maxConsecutivePoints = 5, overlapPoints 
     return { x, y };
   };
 
-  const points = ranges.map((distance, index) => {
-    const validDistance = distance >= minDistance ? Math.min(distance, maxDistance) : distance;
-    const theta = index * angle_increment - Math.PI;
+  const interpolateMissingData = (ranges) => {
+    const interpolatedRanges = [...ranges];
+    for (let i = 0; i < ranges.length; i++) {
+      if (ranges[i] < minDistance || !isFinite(ranges[i])) {
+        // Find nearest valid neighbors
+        let prev = i - 1;
+        while (prev >= 0 && (ranges[prev] < minDistance || !isFinite(ranges[prev]))) prev--;
+        let next = i + 1;
+        while (next < ranges.length && (ranges[next] < minDistance || !isFinite(ranges[next]))) next++;
+
+        if (prev >= 0 && next < ranges.length) {
+          // Average the distances of the neighbors
+          interpolatedRanges[i] = (ranges[prev] + ranges[next]) / 2;
+        } else if (prev >= 0) {
+          // Use the previous valid point
+          interpolatedRanges[i] = ranges[prev];
+        } else if (next < ranges.length) {
+          // Use the next valid point
+          interpolatedRanges[i] = ranges[next];
+        } else {
+          // Default to maxDistance if no neighbors are valid
+          interpolatedRanges[i] = maxDistance;
+        }
+      }
+    }
+    return interpolatedRanges;
+  };
+
+  const interpolatedRanges = interpolateMissingData(ranges);
+
+  const points = interpolatedRanges.map((distance, index) => {
+    const validDistance = Math.min(distance, maxDistance);
+    const theta = index * angle_increment - Math.PI - Math.PI / 2; // Rotate by 90° counterclockwise
     const { x, y } = polarToCartesian(theta, validDistance);
-    return { x, y, theta, distance };
+    return { x, y, theta, distance: validDistance };
   });
 
   const scaleFactor = 250 / maxDistance;
@@ -46,27 +76,25 @@ const LidarVisualization = ({ scanData, maxConsecutivePoints = 5, overlapPoints 
             if (point.distance >= minDistance) {
               currentGroup.push(point);
 
-              // Ensure groups overlap by using `overlapPoints`
               if (currentGroup.length >= maxConsecutivePoints + overlapPoints || index === points.length - 1) {
-                // Calculate outer edge points with additional overlap extension
-                const edgePoints = currentGroup.map(p => polarToCartesian(p.theta, maxDistance * 1.02)); // Extend by 2%
+                const edgePoints = currentGroup.map((p) =>
+                  polarToCartesian(p.theta, maxDistance * 1.02)
+                );
 
-                // Construct polygon points, reusing the overlap points for smooth connection
                 const polygonString = [
-                  ...currentGroup.map(p => `${p.x * scaleFactor},${p.y * scaleFactor}`),
-                  ...edgePoints.reverse().map(p => `${p.x * scaleFactor},${p.y * scaleFactor}`)
-                ].join(" ");
+                  ...currentGroup.map((p) => `${p.x * scaleFactor},${p.y * scaleFactor}`),
+                  ...edgePoints.reverse().map((p) => `${p.x * scaleFactor},${p.y * scaleFactor}`),
+                ].join(' ');
 
                 groupedPolygons.push(
                   <polygon
                     key={index}
                     points={polygonString}
-                    fill="rgba(150, 150, 150, 1)" // Slightly darker fill for visibility
+                    fill="rgba(150, 150, 150, 1)"
                     stroke="none"
                   />
                 );
 
-                // Start the next group with the last `overlapPoints` of the current group
                 currentGroup = currentGroup.slice(-overlapPoints);
               }
             } else {
