@@ -3,7 +3,7 @@ import React from 'react';
 const LidarVisualization = ({ scanData, maxConsecutivePoints = 5, overlapPoints = 2 }) => {
   const { angle_increment, ranges } = scanData;
 
-  const maxDistance = 10;
+  const maxDistance = 7;
   const minDistance = 0.5;
 
   const polarToCartesian = (theta, distance) => {
