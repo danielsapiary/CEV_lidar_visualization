@@ -75,8 +75,6 @@ This project is a LIDAR visualization tool built using React and WebSockets. It 
    - LIDAR points are plotted around the car image at the origin.
    - For each detected point at distance `d`, all points beyond that distance (i.e., from `d` to 10 meters) are filled at the same angle.
    - LIDAR points less than 0.25 meters from the car are ignored.
-  
-     <img width="300" alt="Screenshot 2024-11-04 at 12 55 50 PM" src="https://github.com/user-attachments/assets/870b1812-e09a-4fec-9a79-1c470b3d1303">
 
 ## JSON Format for LIDAR Data
 
@@ -104,7 +102,7 @@ The expected format for LIDAR data sent via POST is as follows:
 
 ## Example Visualization
 
-The app will display a car emoji at the center of the screen, with LIDAR points drawn around it. If a point is detected at a certain distance, all points beyond that distance will be drawn in black.
+<img width="300" alt="Screenshot 2024-11-04 at 12 55 50 PM" src="https://github.com/user-attachments/assets/870b1812-e09a-4fec-9a79-1c470b3d1303">
 
 ## Code Overview
 
