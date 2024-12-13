@@ -1,6 +1,6 @@
 ## CEV LIDAR Visualization
 
-This project is a LIDAR visualization tool built using React and WebSockets. It visualizes LIDAR data by plotting points around a car emoji, simulating distances detected by LIDAR sensors. The app can also handle incoming LIDAR data via WebSockets, displaying all points beyond a detected distance at each angle. The car is placed at the origin, and LIDAR points are plotted around it.
+This project is a LIDAR visualization tool built using React and WebSockets. It visualizes LIDAR data by plotting points around a car image, simulating distances detected by LIDAR sensors. The app can also handle incoming LIDAR data via WebSockets, displaying all points beyond a detected distance at each angle. The car is placed at the origin, and LIDAR points are plotted around it.
 
 ## Installation
 
