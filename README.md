@@ -2,6 +2,25 @@
 
 This project is a LIDAR visualization tool built using React and WebSockets. It visualizes LIDAR data by plotting points around a car image, simulating distances detected by LIDAR sensors. The app can also handle incoming LIDAR data via WebSockets, displaying all points beyond a detected distance at each angle. The car is placed at the origin, and LIDAR points are plotted around it.
 
+## Terminology
+LiDR (Light Detection and Ranging): A remote sensing technology that uses laser pulses to create 3D models of the Earth's surface.
+
+DAQ (Data Acquisition): Handles communication of data from electrical systems and sensors to driver and team.
+
+Server: A program/script that is constantly running on the internet, listening to requests from users, and taking relevant actions.
+
+Client: Term from the client-server architecture model. A client requests for service from the server after establishing a connection with it. Clients devices include: computers, mobile phones, tablets, etc.
+
+Database: A reliable place to store persistent data. Think of it like a big Excel spreadsheet.
+
+React: a JavaScript library for building user interfaces.
+
+JSX: a syntax extension of regular JavaScript used to write HTML CODE IN javascript. It is often used to create React elements instead of HTML.
+
+JSON: Text-based format for storing and exchanging data
+
+Component: A React feature similar to Javascript functions that allow the user to split the UI into independent, reusable pieces, and think about each piece in isolation by accepting arbitrary inputs (called “props”) and returning React elements describing what should appear on the screen.
+
 ## Installation
 
 ### Prerequisites
