@@ -5,13 +5,13 @@ This project is a LIDAR visualization tool built using React and WebSockets. It 
 ## Terminology
 LiDR (Light Detection and Ranging): A remote sensing technology that uses laser pulses to create 3D models of the Earth's surface.
 
-DAQ (Data Acquisition): Handles communication of data from electrical systems and sensors to driver and team.
-
 Server: A program/script that is constantly running on the internet, listening to requests from users, and taking relevant actions.
 
 Client: Term from the client-server architecture model. A client requests for service from the server after establishing a connection with it. Clients devices include: computers, mobile phones, tablets, etc.
 
 Database: A reliable place to store persistent data. Think of it like a big Excel spreadsheet.
+
+Express.js: An open-sourced web framework for Node.js
 
 React: a JavaScript library for building user interfaces.
 
